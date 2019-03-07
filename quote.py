@@ -97,10 +97,7 @@ class Quotes:
     Gets a quote of a certain user
 
     Args:
-      *quote: String sequence with the author at the end
-
-    Returns:
-      The formatted quote
+      quote: String sequence with the author at the end
     """
     await self.client.delete_message(message=ctx.message)
     quotes = self.quote_list
@@ -141,6 +138,15 @@ class Quotes:
         await self.client.edit_message(message = sent_msg, embed = embed)
         toot_counter += 1
 
+  @user.error
+  async def quote_user_handler(self, error, ctx):
+    """
+    Handler for errors in the quote user command
+    """
+    if isinstance(error, commands.BadArgument): 
+      await self.client.say("💔 [KeinNutzer] **Usage: **`!quote user [name]` (Nutzer können Mentions, Nicknamen und Nutzernamen sein)")
+      print(error)
+
   @quote.command(pass_context=True)
   async def add(self, ctx, author: discord.User, *, quote):
     """
@@ -148,9 +154,6 @@ class Quotes:
 
     Args:
       *quote: String sequence with the author at the end
-
-    Returns:
-      The formatted quote
     """
     new_quote = {}
     quote_only = "".join(quote)
@@ -173,6 +176,43 @@ class Quotes:
     embed.set_author(name= "[#" +  str(new_quote["id"]) + "] \"" + new_quote["quote"] + "\"", icon_url=ctx.message.author.avatar_url)
     embed.set_footer(text="Toots: " + str(new_quote["toots"]) + " | Boots: " + str(new_quote["boots"]) + "")
     await self.client.say(embed = embed)
+
+  @add.error
+  async def quote_add_handler(self, error, ctx):
+    """
+    Handler for errors in the quote add command
+    """
+    if isinstance(error, commands.BadArgument): 
+      await self.client.say("💔 [KeinNutzer] **Usage: **`!quote add [author] [quote]` (Nutzer können Mentions, Nicknamen und Nutzernamen sein; Passt auf mit den Sonderzeichen)")
+      print(error)
+
+  @quote.command(pass_context=True)
+  async def edit(self, ctx, id: int, *, new_quote):
+    """
+    Edits A quote by their ID
+    Args:
+      id: identification of the quote
+      quote: new correct quote (without the author)
+    """
+    await self.client.delete_message(message=ctx.message)
+    quotes = self.quote_list
+    quote = next((quote for quote in quotes if quote["id"] == int(id)))
+    quote["quote"] = new_quote;
+    with open('quotes.json', 'w') as outfile:
+      json.dump(quotes, outfile, ensure_ascii=False, indent = 4)
+    embed=discord.Embed(title="Zitat erfolgreich bearbeitet!", color=ctx.message.author.color)
+    embed.set_author(name= "[#" +  str(quote["id"]) + "] \"" + quote["quote"] + "\"", icon_url=ctx.message.author.avatar_url)
+    embed.set_footer(text="Toots: " + str(quote["toots"]) + " | Boots: " + str(quote["boots"]) + "")
+    await self.client.say(embed = embed)
+
+  @edit.error
+  async def quote_edit_handler(self, error, ctx):
+    """
+    Handler for errors in the quote edit command
+    """
+    if isinstance(error, commands.BadArgument): 
+      await self.client.say("💔 [KeinNutzer] **Usage: **`!quote edit [#] [quote]`")
+      print(error)
 
 
 def setup(client):
