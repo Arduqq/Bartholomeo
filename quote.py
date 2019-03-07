@@ -54,7 +54,7 @@ class Quotes:
     author = ctx.message.server.get_member(str(quote["author_id"]))
 
     if author:
-      embed=discord.Embed(title="von: " + author.nick, color=author.color)
+      embed=discord.Embed(title="von: " + author.name, color=author.color)
       embed.set_thumbnail(url=author.avatar_url)
     else:
       embed=discord.Embed(title="von: Mr. X", color=ctx.message.author.color)
@@ -114,7 +114,7 @@ class Quotes:
     author = ctx.message.server.get_member(str(quote["author_id"]))
 
     if author:
-      embed=discord.Embed(title="von: " + author.nick, color=author.color)
+      embed=discord.Embed(title="von: " + author.name, color=author.color)
       embed.set_thumbnail(url=author.avatar_url)
     else:
       embed=discord.Embed(title="von: Mr. X", color=ctx.message.author.color)
@@ -168,7 +168,7 @@ class Quotes:
     self.quote_list.append(new_quote)
     with open('quotes.json', 'w') as outfile:
           json.dump(self.quote_list, outfile, ensure_ascii=False, indent = 4)
-    embed=discord.Embed(title="von: " + author.nick + " erfolgreich hinzugefügt!", color=author.color)
+    embed=discord.Embed(title="von: " + author.name + " erfolgreich hinzugefügt!", color=author.color)
     embed.set_thumbnail(url=author.avatar_url)
     embed.set_author(name= "[#" +  str(new_quote["id"]) + "] \"" + new_quote["quote"] + "\"", icon_url=ctx.message.author.avatar_url)
     embed.set_footer(text="Toots: " + str(new_quote["toots"]) + " | Boots: " + str(new_quote["boots"]) + "")
