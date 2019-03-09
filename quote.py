@@ -1,6 +1,7 @@
 import discord
 import config
 from discord.ext import commands
+from flask import Flask
 import random
 import json
 import asyncio
@@ -197,6 +198,8 @@ class Quotes:
     await self.client.delete_message(message=ctx.message)
     quotes = self.quote_list
     quote = next((quote for quote in quotes if quote["id"] == int(id)))
+    for char in ("\":-"):
+      new_quote = new_quote.replace(char,"")
     quote["quote"] = new_quote;
     with open('quotes.json', 'w') as outfile:
       json.dump(quotes, outfile, ensure_ascii=False, indent = 4)
@@ -211,7 +214,7 @@ class Quotes:
     Handler for errors in the quote edit command
     """
     if isinstance(error, commands.BadArgument): 
-      await self.client.say("💔 [KeinNutzer] **Usage: **`!quote edit [#] [quote]`")
+      await self.client.say("💔 [KeineZahl] **Usage: **`!quote edit [#] [quote]`")
       print(error)
 
 

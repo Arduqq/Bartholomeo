@@ -19,7 +19,7 @@ class Essentials:
     Repeats what the user says
 
     Args:
-      content: Includes everythin written after the invocation
+      content: Includes everything written after the invocation
   
     Returns:
       The content

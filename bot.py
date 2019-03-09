@@ -1,13 +1,41 @@
 import discord
+import json
 import config
+from threading import Thread
+from flask import Flask
+from flask import Response
+from flask_cors import CORS
+from functools import partial
 from discord.ext import commands
 import random
 
 token = config.BOT_CONFIG["discord_token"]
 description = "Do not interfere."
+
+app = Flask(__name__)
+CORS(app)
 client = commands.Bot(command_prefix="!", description=description)
 
-extensions = ["quote", "essentials", "fun"]
+extensions = ["quote", "essentials", "fun", "info"]
+
+@app.route("/")
+def hello():
+  return("Hello from {}".format(client.user.name))
+
+
+@app.route("/quotes")
+def quotes():
+  with open('quotes.json') as json_data:
+    quotelist = json.load(json_data)
+    for value in quotelist:
+      for server in client.servers:
+        author = server.get_member(str(value["author_id"]))
+      if author:
+        value["author_id"] = author.name
+      else:
+        value["author_id"] = "???"
+  return(Response(json.dumps(quotelist),  mimetype='application/json'))
+
 
 @client.event
 async def on_ready():
@@ -44,4 +72,7 @@ if __name__ == "__main__":
     except Exception as error:
       print("{} could not be loaded. [{}]".format(extension,error))
 
+  partial_run = partial(app.run, host="0.0.0.0", port=80, debug=True, use_reloader=False)
+  t = Thread(target=partial_run)
+  t.start()
   client.run(token)

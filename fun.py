@@ -34,7 +34,9 @@ class Fun:
       ]
 
     await self.client.say(random.choice(rant_responses))
-
+    """
+    Says whatever you want Batholomeo to say
+    """
     asyncio.sleep(1)
 
     needs_something_cute = random.choice([True, False])
@@ -49,12 +51,14 @@ class Fun:
         sent_msg = await self.client.say(embed=em)
         await self.client.add_reaction(sent_msg, "😻")
       elif needs_a == "Doggo":
+        await self.client.say("Ich glaube, du brauchst jetzt ein Hündchen. :dog:")
         dog = await self.get_dog()
         em = discord.Embed()
         em = em.set_image(url=dog["message"])
         sent_msg = await self.client.say(embed=em)
         await self.client.add_reaction(sent_msg, "🐶")
       elif needs_a == "Shibe":
+        await self.client.say("Oh, ich hab die Idee, um dich aufzuheitern!")
         dog = await self.get_shibe()
         em = discord.Embed()
         em = em.set_image(url=dog[0])
@@ -85,6 +89,9 @@ class Fun:
 
   @commands.command(pass_context = True)
   async def puss(self, ctx):
+    """
+    Posts a cute cat
+    """
     await self.client.delete_message(message=ctx.message)
     cat = await self.get_cat()
     em = discord.Embed()
@@ -94,6 +101,9 @@ class Fun:
 
   @commands.command(pass_context = True)
   async def doggo(self, ctx):
+    """
+    Posts a cute dog
+    """
     await self.client.delete_message(message=ctx.message)
     dog = await self.get_dog()
     em = discord.Embed()
@@ -103,6 +113,9 @@ class Fun:
 
   @commands.command(pass_context = True)
   async def shibe(self, ctx):
+    """
+    Posts a cute shibe
+    """
     await self.client.delete_message(message=ctx.message)
     dog = await self.get_shibe()
     em = discord.Embed()
