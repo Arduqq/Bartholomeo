@@ -7,13 +7,14 @@ from flask import Response
 from flask_cors import CORS
 from functools import partial
 from discord.ext import commands
+from cors import crossdomain
 import random
 
 token = config.BOT_CONFIG["discord_token"]
 description = "Do not interfere."
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["http://localhost:5000", "http://invictus.cool"])
 client = commands.Bot(command_prefix="!", description=description)
 
 extensions = ["quote", "essentials", "fun", "info"]
@@ -23,17 +24,16 @@ def hello():
   return("Hello from {}".format(client.user.name))
 
 
-@app.route("/quotes")
+@app.route("/quotes", methods=["GET"])
+@crossdomain(origin='*')
 def quotes():
   with open('quotes.json') as json_data:
     quotelist = json.load(json_data)
     for value in quotelist:
       for server in client.servers:
         author = server.get_member(str(value["author_id"]))
-      if author:
-        value["author_id"] = author.name
-      else:
-        value["author_id"] = "???"
+        if author:
+          value["author_id"] = author.name
   return(Response(json.dumps(quotelist),  mimetype='application/json'))
 
 
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     except Exception as error:
       print("{} could not be loaded. [{}]".format(extension,error))
 
-  partial_run = partial(app.run, host="0.0.0.0", port=80, debug=True, use_reloader=False)
+  partial_run = partial(app.run, host="0.0.0.0", port=5000, debug=True, use_reloader=False, threaded=True)
   t = Thread(target=partial_run)
   t.start()
   client.run(token)
